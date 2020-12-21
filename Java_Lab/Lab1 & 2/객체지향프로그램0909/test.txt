@@ -1,0 +1,3 @@
+javac Useless.java
+Useless.class
+java Useless
