@@ -29,9 +29,8 @@ def sumM(year, month): #해달월 - 1 까지의 날짜를 더함
 
     return sum
 
-def printSc(year, month, d): #달력출력
+def printDay(year, month, d): #요일출력
     day = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
-    cnt = 1
     crrt = day[(sumY(year) + sumM(year, month) + d) % 7]
     print(crrt)
 #-----------------------Main
@@ -43,4 +42,4 @@ month = int(input())
 print("일을 입력하세요 : ")
 d = int(input())
 
-printSc(year, month, d)
+printDay(year, month, d)
