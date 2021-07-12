@@ -4,6 +4,7 @@ import numpy as np
 s_img = cv2.imread('solidWhiteCurve.jpg')
 s_height = s_img.shape[1]
 s_weight = s_img.shape[0]
+cv2.imshow("origin", s_img)
 
 #-------------------------------------------
 #gray -> blur -> canny -> warp -> sliding
@@ -12,11 +13,14 @@ s_gray = cv2.cvtColor(s_img, cv2.COLOR_BGR2GRAY)
 
 kernel_size = 5
 s_blur = cv2.GaussianBlur(s_gray, (kernel_size, kernel_size), 0)
-
+the = cv2.threshold(s_blur, 150, 225, cv2.THRESH_BINARY)[1]
 low_th = 120
 high_th = 180
-s_canny = cv2.Canny(s_blur, low_th, high_th)
 
+cv2.imshow("blur", s_blur)
+cv2.imshow("thred", the)
+
+s_canny = cv2.Canny(the, low_th, high_th)
 cv2.imshow("before", s_canny)
 #cv2.waitKey(0)
 #------------------------------------------
@@ -25,13 +29,14 @@ cv2.imshow("before", s_canny)
 w = 960
 h = 540
 
-src = np.float32([[w * 0.33, h * 0.7],
-                 [w * 0.27, h * 0.851],
-                 [w, h * 0.851],
-                 [w * 0.677, h * 0.7]]) #변환지점 좌표
+src = np.float32([[w * 0.22, h * 0.7],
+                 [w * 0.17, h * 0.851],
+                 [w * 1.12, h * 0.851],
+                 [w * 0.8, h * 0.7]]) #변환지점 좌표
+
 dst = np.float32([[w * 0.075, 0],
                  [w * 0.2, h],
-                 [w, h],
+                 [w * 0.95, h],
                  [w * 0.85, 0]]) #지정해줄 좌표
 #src와 dst는 좌표의 순서가 서로 같아야 하고 float32
 M = cv2.getPerspectiveTransform(src, dst) #변환행렬 / 원본좌표순서, 결과좌표순서
@@ -65,8 +70,8 @@ nonx = s_non[1]
 left_idx = []
 right_idx = []
 
-left_idx = ((nonx >= w * 0.18) & (nony >= h * 0.88) & (nonx <= w * 0.28)).nonzero()[0]
-right_idx = ((nonx >= w * 0.7) & (nony >= h * 0.88) & (nonx <= w * 0.8)).nonzero()[0]
+left_idx = ((nonx >= w * 0.3) & (nony >= h * 0.88) & (nonx <= w * 0.38)).nonzero()[0]
+right_idx = ((nonx >= w * 0.45) & (nony >= h * 0.88) & (nonx <= w * 0.65)).nonzero()[0]
 
 if (len(left_idx) >= min_pix):
     dflag = 1
@@ -96,14 +101,14 @@ if dflag != 3:
             # print(window_y_min)
 
             cv2.rectangle(slide, (window_x_min, window_y_min), (window_x_max, window_y_max), (120, 150, 0), 2)
-            cv2.rectangle(slide, (window_x_min + int(slide_w * 0.53), window_y_min), (window_x_max + int(slide_w * 0.53) , window_y_max), (0, 150, 120), 2)
+            cv2.rectangle(slide, (window_x_min + int(slide_w * 0.36), window_y_min), (window_x_max + int(slide_w * 0.36) , window_y_max), (0, 150, 120), 2)
         elif (dflag == 2):
             window_x_min = x_current - margin
             window_x_max = x_current + margin
             window_y_min = y_current - window_h * (w + 1)
             window_y_max = y_current - window_h * w
 
-            cv2.rectangle(slide, (window_x_min - int(slide_w * 0.53), window_y_min), (window_x_max - int(slide_w * 0.53), window_y_max), (120, 150, 0), 2)
+            cv2.rectangle(slide, (window_x_min - int(slide_w * 0.36), window_y_min), (window_x_max - int(slide_w * 0.36), window_y_max), (120, 150, 0), 2)
             cv2.rectangle(slide, (window_x_min, window_y_min), (window_x_max, window_y_max), (0, 150, 120), 2)
 
 cv2.imshow('slide', slide)
